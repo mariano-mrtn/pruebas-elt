@@ -22,7 +22,7 @@ LEVELS = (1, 2, 4, 8)  # req/s objetivo
 CB_WINDOW_H = 290  # margen bajo el tope de ~300 velas por llamada
 BACKFILL_CALLS = {"binance": 79, "coinbase": 314, "okx": 763}  # segun el doc (5.3)
 HEADER_HINTS = ("limit", "weight", "retry", "remaining")
-
+BINANCE_BASE = "https://data-api.binance.vision"  # api.binance.com da 451 desde Actions
 
 def now_ms():
     return int(time.time() * 1000)
@@ -35,7 +35,7 @@ def iso(ms):
 # --- una funcion por exchange: recibe el cursor (ms) y devuelve la respuesta ---
 def fetch_binance(cursor):
     return requests.get(
-        "https://api.binance.com/api/v3/klines",
+        f"{BINANCE_BASE}/api/v3/klines",
         params={"symbol": "BTCUSDT", "interval": "1h", "limit": 1000, "endTime": cursor},
         headers=UA, timeout=15,
     )

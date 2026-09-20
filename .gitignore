@@ -17,3 +17,17 @@ dbt/dbt_packages/
 
 # Sistema
 .DS_Store
+
+# secretos y variables de entorno reales
+.env
+*.env
+!.env.example
+
+#Archivos especificos de Windows
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# Editores e IDEs
+.vscode/
+.idea/
