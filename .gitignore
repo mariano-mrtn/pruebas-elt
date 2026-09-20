@@ -1,0 +1,19 @@
+# Secretos
+.env
+
+# Backups (los dumps contienen datos de usuarios)
+backups/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Sistema
+.DS_Store
