@@ -6,7 +6,7 @@ name: monitor-binance-stability
 # chequeo extra.
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "17 */2 * * *"
   workflow_dispatch:
 
 # Necesario para poder commitear el log de vuelta al repo.
