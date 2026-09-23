@@ -1,0 +1,49 @@
+name: monitor-binance-stability
+
+# Ticket #2: corre en paralelo a todo lo demas, sin bloquear. Cadencia cada
+# 2 horas (12 chequeos/dia) durante la ventana de 7-14 dias. Tambien se
+# puede disparar a mano desde la pestaña Actions para probarlo o forzar un
+# chequeo extra.
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+
+# Necesario para poder commitear el log de vuelta al repo.
+permissions:
+  contents: write
+
+# Evita que dos corridas escriban el log al mismo tiempo (por ejemplo un
+# dispatch manual que coincide con el cron).
+concurrency:
+  group: monitor-binance-stability
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: Chequear data-api.binance.vision
+        run: python tools/monitor_binance_stability.py
+
+      - name: Commitear el log actualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/monitoring/binance_stability_log.csv
+          if git diff --staged --quiet; then
+            echo "Sin cambios en el log."
+          else
+            git commit -m "chore: log de estabilidad de Binance [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi

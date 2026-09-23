@@ -1,0 +1,27 @@
+name: binance-stability-report
+
+# Disparo manual: "revisar en los proximos dias" (ticket #2) sin tener que
+# bajar el CSV y correrlo local. Muestra el veredicto en el resumen del run.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Tamaño de la ventana a evaluar (dias)"
+        required: false
+        default: "7"
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generar reporte de estabilidad
+        run: |
+          python tools/analyze_binance_stability.py --days "${{ github.event.inputs.days }}" \
+            | tee -a "$GITHUB_STEP_SUMMARY"
